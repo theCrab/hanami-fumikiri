@@ -1,10 +1,10 @@
 module Hanami
-  class Fumikiri
+  module Fumikiri
     include JsonWebToken
     attr_reader :api_key
 
     def initialize
-      @api_key ||= User.new
+      # @api_key ||= User.new
     end
 
     def issue(args={})

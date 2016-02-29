@@ -1,7 +1,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'hanami/fumikiri/version'
+require 'hanami/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'hanami-fumikiri'
@@ -12,12 +12,12 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Hanami Ruby user authentication based on the community needs. Supports API, CLI and Web interfaces}
   spec.homepage      = 'https://github.com/theCrab/hanami-fumikiri'
   spec.license       = 'MIT'
-
+  spec.platform      = Gem::Platform::RUBY
   spec.files         = `git ls-files -- lib/* CHANGELOG.md LICENSE.md README.md hanami-router.gemspec`.split($/)
   spec.executables   = []
   spec.test_files    = spec.files.grep(%r{^(test)/})
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>= 2.2.0'
+  spec.required_ruby_version = '>= 2.0.0'
 
   # spec.add_dependency 'http_router',  '~> 0.11'
   # spec.add_dependency 'hanami-utils', '~> 0.8'
