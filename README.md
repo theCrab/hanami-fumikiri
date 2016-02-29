@@ -1,7 +1,4 @@
 # hanami-fumikiri
-<<<<<<< HEAD
-Hanamirb User Authentication.  
-=======
 Hanami User Authentication.  
 
 As most will know by now, Hanami Framework is turning out to be a very well thought one.
@@ -20,4 +17,3 @@ Support for
 - Web or browser based Authentication
 - API or mobile app style Authentication
 - CLI style  Authentication
->>>>>>> gh-pages

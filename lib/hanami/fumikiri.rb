@@ -1,9 +1,5 @@
 module Hanami
   class Fumikiri
-<<<<<<< HEAD
-    def initialize(argument)
-      @argument = argument
-=======
     include JsonWebToken
     attr_reader :api_key
 
@@ -18,7 +14,6 @@ module Hanami
 
     def compare(args)
       verify()
->>>>>>> gh-pages
     end
   end
 end
