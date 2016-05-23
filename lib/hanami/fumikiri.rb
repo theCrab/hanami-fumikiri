@@ -28,7 +28,7 @@ module Hanami
 
     def current_user
       validate_jwt
-      @current_user = UserRepository.find(@decoded_token['user_id'])
+      @current_user = UserRepository.find(@decoded_token['sub'])
     end
 
     private
@@ -48,7 +48,7 @@ module Hanami
         token = auth.split(' ').last
         @decoded_token = JWT.decode(token, ENV['JWT_SECRET'])
         # make better errors
-        raise InvalidTokenError if @decoded_token['user_id'].empty?
+        raise InvalidTokenError if @decoded_token['sub'].empty?
 
       rescue JWT::DecodeError
         # make better errors
