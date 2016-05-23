@@ -3,7 +3,7 @@ module Hanami
     module Skip
       private
       def authenticate!
-        # no-op implementation
+        # no-op
       end
     end
 
@@ -26,12 +26,18 @@ module Hanami
       end
     end
 
+    private
     def current_user
-      validate_jwt
-      @current_user = UserRepository.find(@decoded_token['sub'])
+      if !user_token.empty?
+        validate_jwt
+        @current_user = UserRepository.find(@decoded_token['sub'])
+      elsif user_id
+        @current_user = UserRepository.find(user_id)
+      else
+        raise MissingTokenError # or redirect_to '/some_url'
+      end
     end
 
-    private
     def authenticate!
       redirect_to '/login' unless authenticated?
     end
@@ -40,15 +46,21 @@ module Hanami
       ! current_user.nil?
     end
 
+    def user_id
+      sessions['user_id']
+    end
+
+    def user_token
+      request.env['Authentication']
+    end
+
     def validate_jwt
       begin
-        auth = request.env['Authorisation']
-        raise MissingTokenError if auth.nil?
-
-        token = auth.split(' ').last
+        token = user_token.sub(/Bearer\s/, '')
         @decoded_token = JWT.decode(token, ENV['JWT_SECRET'])
         # make better errors
-        raise InvalidTokenError if @decoded_token['sub'].empty?
+        # we should let this error bubble-up
+        # raise InvalidTokenError if @decoded_token['sub'].empty?
 
       rescue JWT::DecodeError
         # make better errors
