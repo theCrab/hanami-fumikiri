@@ -22,3 +22,15 @@ Support for
 - Require revocable sessions
 - Expire inactive sessions
 - Revoke session on password change
+
+## Support for reserved claim names
+
+JSON Web Token defines some reserved claim names and defines how they should be used. JWT supports these reserved claim names:
+
+- 'exp' (Expiration Time) Claim. Error (`JWT::ExpiredSignature`)
+- 'nbf' (Not Before Time) Claim. Error (`JWT::ImmatureSignature`)
+- 'iss' (Issuer) Claim. Error (`JWT::InvalidIssuerError`)
+- 'aud' (Audience) Claim. Error (`JWT::InvalidAudError`)
+- 'jti' (JWT ID) Claim. Error (`JWT::InvalidJtiError`)
+- 'iat' (Issued At) Claim. Error (`JWT::InvalidIatError`)
+- 'sub' (Subject) Claim. Error (`JWT::InvalidSubError`)
