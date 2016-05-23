@@ -13,6 +13,12 @@ module Hanami
       end
     end
 
+    class MissingTokenError < StandardError
+      def message
+        "No 'Authorisation' header provided."
+      end
+    end
+
     def self.included(base)
       base.class_eval do
         before :authenticate!
@@ -37,8 +43,7 @@ module Hanami
     def validate_jwt
       begin
         auth = request.headers['Authorisation']
-        # make better errors
-        raise InvalidTokenError if auth.nil?
+        raise MissingTokenError if auth.nil?
 
         token = auth.split(' ').last
         @decoded_token = JWT.decode(token, ENV['JWT_SECRET'])
