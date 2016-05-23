@@ -10,7 +10,8 @@ Gemfile.lock
 /test/tmp/
 /test/version_tmp/
 /tmp/
-
+.DS_Store
+/assets
 ## Specific to RubyMotion:
 .dat*
 .repl_history
