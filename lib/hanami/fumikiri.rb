@@ -42,7 +42,7 @@ module Hanami
 
     def validate_jwt
       begin
-        auth = request.headers['Authorisation']
+        auth = request.env['Authorisation']
         raise MissingTokenError if auth.nil?
 
         token = auth.split(' ').last
