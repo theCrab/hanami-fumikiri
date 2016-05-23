@@ -1,19 +1,54 @@
 module Hanami
   module Fumikiri
-    include JsonWebToken
-    attr_reader :api_key
+		module Skip
+	    private
+	    def authenticate!
+        # no-op implementation
+	    end
+	  end
 
-    def initialize
-      # @api_key ||= User.new
+    class InvalidTokenError < StandardError
+      def message
+        "Your token has problems... "
+      end
     end
 
-    def issue(args={})
-      opts= args.opts #=> { user_id: '', exp: Time.in_seconds, iss: 'https/www.paxi.uk/', org_id: 1234, device_id: 12345 }
-      sign(opts, { alg: 'RSA256', key: < RSA private key >})
-    end
+		def self.included(base)
+			base.class_eval do
+				before :authenticate!
+				expose :current_user
+			end
+		end
 
-    def compare(args)
-      verify()
-    end
+		def current_user
+			validate_jwt
+			@current_user = UserRepository.find(@decoded_token['user_id'])
+		end
+
+		private
+		def authenticate!
+			redirect_to '/login' unless authenticated?
+		end
+
+		def authenticated?
+			! current_user.nil?
+		end
+
+		def validate_jwt
+			begin
+				auth = request.headers['Authorisation']
+        # make better errors
+				raise InvalidTokenError if auth.nil?
+
+				token = auth.split(' ').last
+				@decoded_token = JWT.decode(token, ENV['JWT_SECRET'])
+        # make better errors
+				raise InvalidTokenError if @decoded_token['user_id'].empty?
+
+			rescue	JWT::DecodeError
+        # make better errors
+				raise InvalidTokenError
+			end
+		end
   end
 end
