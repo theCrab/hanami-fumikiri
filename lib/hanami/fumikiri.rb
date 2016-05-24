@@ -1,3 +1,4 @@
+require 'pry'
 module Hanami
   module Fumikiri
 
@@ -33,7 +34,7 @@ module Hanami
     end
 
     def user_token
-      request.env['Authentication']
+      request.env.fetch('Authentication') { raise MissingTokenError }
     end
 
     def validate_jwt

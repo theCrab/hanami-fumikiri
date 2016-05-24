@@ -11,7 +11,7 @@ describe Hanami::Fumikiri do
   end
 
   it 'raises MissingTokenError when Authorisation is nil' do
-    expect{ action.new.call('Authorisation' => nil) }.to raise_error \
+    expect{ action.new.call({}) }.to raise_error \
       Hanami::Fumikiri::MissingTokenError
   end
 
