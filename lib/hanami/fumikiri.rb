@@ -1,23 +1,5 @@
 module Hanami
   module Fumikiri
-    module Skip
-      private
-      def authenticate!
-        # no-op
-      end
-    end
-
-    class InvalidTokenError < StandardError
-      def message
-        "Your token has problems... "
-      end
-    end
-
-    class MissingTokenError < StandardError
-      def message
-        "No 'Authorisation' header provided."
-      end
-    end
 
     def self.included(base)
       base.class_eval do
