@@ -13,7 +13,7 @@ module Hanami
     def current_user
       if !user_token.empty?
         validate_jwt
-        @current_user = UserRepository.find(@decoded_token['sub'])
+        @current_user = UserRepository.find(@decoded_token[0]['sub'])
       elsif user_id
         @current_user = UserRepository.find(user_id)
       else
@@ -40,7 +40,7 @@ module Hanami
     def validate_jwt
       begin
         token = user_token.sub(/Bearer\s/, '')
-        @decoded_token = JWT.decode(token, ENV['JWT_SECRET'])
+        @decoded_token = JWT.decode(token, ENV['JWT_SECRET'], 'HS256')
         # make better errors
         # we should let this error bubble-up
         # raise InvalidTokenError if @decoded_token['sub'].empty?
