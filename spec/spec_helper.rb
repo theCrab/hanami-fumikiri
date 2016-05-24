@@ -1,5 +1,6 @@
 require 'hanami-fumikiri'
 require 'hanami/controller'
+require_relative 'hanami-fumikiri/fixtures'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
