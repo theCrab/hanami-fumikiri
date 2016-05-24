@@ -1,10 +1,10 @@
-require 'pry'
+require 'hanami/controller'
+
 module Hanami
   module Fumikiri
 
     def self.included(base)
       base.class_eval do
-        before :authenticate!
         expose :current_user
       end
     end
@@ -51,4 +51,11 @@ module Hanami
       end
     end
   end
+end
+
+::Hanami::Controller.configure do
+	prepare do
+		include Hanami::Fumikiri
+		before :authenticate!
+	end
 end

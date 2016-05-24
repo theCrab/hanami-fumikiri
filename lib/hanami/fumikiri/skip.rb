@@ -5,6 +5,10 @@ module Hanami
       def authenticate!
         # no-op
       end
+
+      def current_user
+        # no-op
+      end
     end
   end
 end
