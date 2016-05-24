@@ -9,7 +9,7 @@ module Hanami
 
     class MissingTokenError < StandardError
       def message
-        "No 'Authorisation' header provided."
+        "No 'Authentication' header provided."
       end
     end
 

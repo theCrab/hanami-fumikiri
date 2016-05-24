@@ -54,8 +54,8 @@ module Hanami
 end
 
 ::Hanami::Controller.configure do
-	prepare do
-		include Hanami::Fumikiri
-		before :authenticate!
-	end
+  prepare do
+    include Hanami::Fumikiri
+    before :authenticate!
+  end
 end
