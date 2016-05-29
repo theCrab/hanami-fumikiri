@@ -16,6 +16,6 @@ describe Hanami::Fumikiri do
 
   it 'raises error when invalid token' do
     expect{ action.new.call('Authentication' => 'not_so_valid_token') }.to raise_error \
-      Hanami::Fumikiri::InvalidTokenError
+      JWT::DecodeError
   end
 end

@@ -45,13 +45,8 @@ module Hanami
       begin
         token = user_token.sub(/Bearer\s/, '')
         @decoded_token = JWT.decode(token, ENV['JWT_SECRET'])
-        # make better errors
-        # we should let this error bubble-up
-        # raise InvalidTokenError if @decoded_token['sub'].empty?
-
-      rescue JWT::DecodeError
-        # make better errors
-        raise InvalidTokenError
+      rescue JWT::DecodeError => e
+        raise e
       end
     end
   end
