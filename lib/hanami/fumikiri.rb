@@ -11,14 +11,10 @@ module Hanami
 
     private
     def current_user
-      if !user_token.empty?
-        validate_jwt
-        @current_user = UserRepository.find(@decoded_token['sub'])
-      elsif user_id
-        @current_user = UserRepository.find(user_id)
-      else
-        raise MissingTokenError # or redirect_to '/some_url'
-      end
+      validate_jwt
+      @current_user = UserRepository.find(user_id)
+      raise MissingUserError unless @current_user # or redirect_to '/some_url'
+      @current_user
     end
 
     def authenticate!
@@ -26,11 +22,19 @@ module Hanami
     end
 
     def authenticated?
-      ! current_user.nil?
+      !!current_user
+    end
+
+    def user_session
+      nil # temporary until real session
     end
 
     def user_id
-      sessions['user_id']
+      user_session || token_sub
+    end
+
+    def token_sub
+      @decoded_token.fetch('sub') { raise MissingSubError }
     end
 
     def user_token
