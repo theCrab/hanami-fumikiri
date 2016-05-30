@@ -30,15 +30,15 @@ module Hanami
     end
 
     def user_id
-      user_session || token_sub
+      token_sub || user_session
     end
 
     def token_sub
-      @decoded_token.fetch('sub') { raise MissingSubError }
+      @decoded_token.fetch('sub') { raise MissingSubError unless user_session }
     end
 
     def user_token
-      request.env.fetch('Authentication') { raise MissingTokenError }
+      request.env.fetch('Authentication') { raise MissingTokenError unless user_session }
     end
 
     def validate_jwt
