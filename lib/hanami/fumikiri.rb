@@ -13,8 +13,6 @@ module Hanami
     def current_user
       validate_jwt if user_token
       @current_user = UserRepository.find(user_id)
-      raise MissingUserError unless @current_user # or redirect_to '/some_url'
-      @current_user
     end
 
     def authenticate!
