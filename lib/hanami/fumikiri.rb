@@ -32,7 +32,7 @@ module Hanami
     end
 
     def token_sub
-      @decoded_token.fetch('sub') { raise MissingSubError unless user_session }
+      @decoded_token[0].fetch('sub') { raise MissingSubError unless user_session }
     end
 
     def user_token
@@ -42,7 +42,7 @@ module Hanami
     def validate_jwt
       begin
         token = user_token.sub(/Bearer\s/, '')
-        @decoded_token = JWT.decode(token, ENV['JWT_SECRET'])
+        @decoded_token = JWT.decode(token, ENV['JWT_SECRET'], 'HS256')
       rescue JWT::DecodeError => e
         raise e
       end
