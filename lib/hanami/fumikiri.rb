@@ -43,11 +43,11 @@ module Hanami
     end
 
     def token_sub
-      if decoded_token.result.success?
+      if decoded_token.success?
         # proceed
       end
 
-      if decoded_token.result.failure?
+      if decoded_token.failure?
         # logout the user, deny access and redirect to /signin
       end
 
