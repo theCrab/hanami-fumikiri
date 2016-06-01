@@ -21,8 +21,13 @@ module Hanami
 
       private
       def verify
-        JWT.decode(@payload[:data], ENV['JWT_SECRET'], true, verify_iat: true, iat: true, \
-                   verify_aud: true, aud: 'role:admin')
+        JWT.decode(@payload[:data], ENV['JWT_SECRET'], true, {
+          # This is a block
+            verify_iat: true,
+            iat: true,
+            verify_aud: true,
+            aud: 'role:admin'
+          })
       end
 
       def issue

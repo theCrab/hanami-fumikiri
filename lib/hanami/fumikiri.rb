@@ -39,11 +39,21 @@ module Hanami
     end
 
     def decoded_token
-      TokenHandler.new({ data: user_token, action: 'verify' }).call.result
+      TokenHandler.new({ data: user_token, action: 'verify' }).call
     end
 
     def token_sub
-      decoded_token[0].fetch('sub') { raise MissingSubError unless user_session }
+      if decoded_token.result.success?
+        # proceed
+      end
+
+      if decoded_token.result.failure?
+        # logout the user, deny access and redirect to /signin
+      end
+
+      # result[0].fetch('sub') # using fetch Raises an error 'KeyError: key not found:'
+      # result[0]['sub'] # Fails silently if the Hash#key is missing
+      decoded_token.result[0].fetch('sub') { raise MissingSubError unless user_session }
     end
 
     def user_token
