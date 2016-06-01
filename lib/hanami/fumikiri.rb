@@ -11,7 +11,7 @@ module Hanami
 
     private
     def current_user
-      @current_user = UserRepository.find(user_id)
+      @current_user = UserRepository.find(token_sub)
     end
 
     def authenticate!
@@ -20,14 +20,6 @@ module Hanami
 
     def authenticated?
       !!current_user
-    end
-
-    def user_session
-      nil # temporary until real session
-    end
-
-    def user_id
-      token_sub || user_session
     end
 
     def create_token(user)
@@ -47,18 +39,26 @@ module Hanami
         # proceed
       end
 
-      if decoded_token.failure?
+      unless decoded_token.success?
         # logout the user, deny access and redirect to /signin
       end
 
       # result[0].fetch('sub') # using fetch Raises an error 'KeyError: key not found:'
       # result[0]['sub'] # Fails silently if the Hash#key is missing
-      decoded_token.result[0].fetch('sub') { raise MissingSubError unless user_session }
+      decoded_token.result[0].fetch('sub') { raise MissingSubError }
     end
 
     def user_token
-      auth = request.env.fetch('Authentication') { raise MissingTokenError unless user_session }
-      auth.sub(/Bearer\s/, '')
+      auth_token || authentication_header
+    end
+
+    def authentication_header
+      (request.env.fetch('Authentication') { raise MissingTokenError }).
+        sub(/Bearer\s/, '')
+    end
+
+    def auth_token
+      request.env['auth_token']
     end
 
   end
