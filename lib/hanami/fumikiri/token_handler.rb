@@ -17,9 +17,14 @@ module Hanami
         when 'issue'
           issue
         end
+      rescue => e
+        ## Maybe instead of handling failure in the fumikiri module
+        # we can handle it here instead?
+        raise e
       end
 
       private
+
       def verify
         JWT.decode(@payload[:data], ENV['JWT_SECRET'], true, {
           # This is a block
