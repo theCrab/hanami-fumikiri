@@ -26,7 +26,11 @@ module Hanami
             verify_iat: true,
             iat: true,
             verify_aud: true,
-            aud: 'role:admin'
+            aud: 'role:admin',
+            # verify_jti: true,
+            # jti: 'd2e9c5ea-30af-4c81-b4c4-7c864311db67',
+            # verify_iss: true,
+            # iss: 'thecrab.com'
           })
       end
 

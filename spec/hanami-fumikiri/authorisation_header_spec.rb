@@ -40,12 +40,13 @@ describe Hanami::Fumikiri do
   describe 'valid action calls' do
 
     it 'raises no errors' do
-      expect{ action.new.call('Authentication' => "Bearer #{encoded_data}") }.not_to raise_error
+      expect(encoded_data.success?).to be(true)
+      expect{ action.new.call('Authentication' => "Bearer #{encoded_data.result}") }.not_to raise_error
     end
 
     it 'returs a user with same id as sub' do
       valid_request = action.new
-      valid_request.call('Authentication' => "Bearer #{encoded_data}")
+      valid_request.call('Authentication' => "Bearer #{encoded_data.result}")
       expect(valid_request.user.id).to eq 1
     end
 

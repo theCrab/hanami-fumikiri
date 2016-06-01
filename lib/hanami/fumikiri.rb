@@ -32,10 +32,17 @@ module Hanami
 
     def create_token(user)
       payload = {
-        data: { sub: user.id, iat: Time.now.to_i, exp: Time.now.to_i + 800407, aud: 'role:admin' },
-        action: 'issue'
+        data: {
+          sub: user.id,                 # subject:
+          iat: Time.now.to_i,           # issued_at: DateTime when it was created
+          exp: Time.now.to_i + 800407,  # expire: DateTime when it expires
+          aud: user.role,               # audience: [1000, 301, 500, ...], could be a user/app role/ACL
+          iss: 'thecrab.com',           # issuer: who issued the token
+          jti: user.jti                 # JWT ID: we can store this in db
+        },
+        action: 'issue'                 # Will this conflict with Hanami::Action ?
       }
-      TokenHandler.new(payload).call.result
+      TokenHandler.new(payload).call
     end
 
     def decoded_token
@@ -44,16 +51,14 @@ module Hanami
 
     def token_sub
       if decoded_token.success?
-        # proceed
+        # result[0].fetch('sub') # using fetch Raises an error 'KeyError: key not found:'
+        # result[0]['sub'] # Fails silently if the Hash#key is missing
+        decoded_token.result[0].fetch('sub') { raise MissingSubError unless user_session }
+      else
+        # we have an error
+        decoded_token.errors
+        return nil
       end
-
-      if decoded_token.failure?
-        # logout the user, deny access and redirect to /signin
-      end
-
-      # result[0].fetch('sub') # using fetch Raises an error 'KeyError: key not found:'
-      # result[0]['sub'] # Fails silently if the Hash#key is missing
-      decoded_token.result[0].fetch('sub') { raise MissingSubError unless user_session }
     end
 
     def user_token
