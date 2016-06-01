@@ -12,9 +12,8 @@ describe Hanami::Fumikiri do
   end
 
   let(:secret)       { 'jwt$3cr3t' }
-  let(:data)         { { sub: 1, name: 'Doe' } }
-  let(:encoded_data) { JWT.encode data, secret, 'HS256' }
-
+  let(:user)         { UserRepository.new(1) }
+  let(:encoded_data) { action.new.send(:create_token, user) }
 
   before { ENV['JWT_SECRET'] = secret }
 
@@ -28,6 +27,13 @@ describe Hanami::Fumikiri do
     it 'raises error when invalid token' do
       expect{ action.new.call('Authentication' => 'not_so_valid_token') }.to raise_error \
         JWT::DecodeError
+    end
+
+    it 'raises error sub missing' do
+      no_sub_data = { no_sub: user.id, iat: Time.now.to_i, exp: Time.now.to_i + 800407, aud: 'role:admin' }
+      invalid_token = JWT.encode(no_sub_data, ENV['JWT_SECRET'], 'HS256')
+      expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
+        Hanami::Fumikiri::MissingSubError
     end
   end
 

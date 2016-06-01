@@ -11,7 +11,6 @@ module Hanami
 
     private
     def current_user
-      validate_jwt if user_token
       @current_user = UserRepository.find(user_id)
     end
 
@@ -31,22 +30,27 @@ module Hanami
       token_sub || user_session
     end
 
+    def create_token(user)
+      payload = {
+        data: { sub: user.id, iat: Time.now.to_i, exp: Time.now.to_i + 800407, aud: 'role:admin' },
+        action: 'issue'
+      }
+      TokenHandler.new(payload).call.result
+    end
+
+    def decoded_token
+      TokenHandler.new({ data: user_token, action: 'verify' }).call.result
+    end
+
     def token_sub
-      @decoded_token[0].fetch('sub') { raise MissingSubError unless user_session }
+      decoded_token[0].fetch('sub') { raise MissingSubError unless user_session }
     end
 
     def user_token
-      request.env.fetch('Authentication') { raise MissingTokenError unless user_session }
+      auth = request.env.fetch('Authentication') { raise MissingTokenError unless user_session }
+      auth.sub(/Bearer\s/, '')
     end
 
-    def validate_jwt
-      begin
-        token = user_token.sub(/Bearer\s/, '')
-        @decoded_token = JWT.decode(token, ENV['JWT_SECRET'], 'HS256')
-      rescue JWT::DecodeError => e
-        raise e
-      end
-    end
   end
 end
 
