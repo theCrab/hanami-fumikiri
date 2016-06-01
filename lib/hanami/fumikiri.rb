@@ -10,9 +10,6 @@ module Hanami
     end
 
     private
-    def current_user
-      @current_user = UserRepository.find(user_id)
-    end
 
     def authenticate!
       redirect_to '/login' unless authenticated?
@@ -22,12 +19,32 @@ module Hanami
       !!current_user
     end
 
-    def user_session
-      nil # temporary until real session
+    def current_user
+      @current_user = UserRepository.find(token_sub)
     end
 
-    def user_id
-      token_sub || user_session
+    def token_sub
+      ## Moved hadling of failure to TokenHandler
+      # this way here we can write only code for successfull requests
+      # what you think of this, makes any sense?
+      decoded_token.result[0].fetch('sub')
+    end
+
+    def decoded_token
+      TokenHandler.new({ data: user_token, action: 'verify' }).call
+    end
+
+    def user_token
+      auth_token || authentication_header
+    end
+
+    def auth_token
+      request.env['auth_token']
+    end
+
+    def authentication_header
+      (request.env.fetch('Authentication') { raise MissingTokenError }).
+        sub(/Bearer\s/, '')
     end
 
     def create_token(user)
@@ -44,28 +61,6 @@ module Hanami
       }
       TokenHandler.new(payload).call
     end
-
-    def decoded_token
-      TokenHandler.new({ data: user_token, action: 'verify' }).call
-    end
-
-    def token_sub
-      if decoded_token.success?
-        # result[0].fetch('sub') # using fetch Raises an error 'KeyError: key not found:'
-        # result[0]['sub'] # Fails silently if the Hash#key is missing
-        decoded_token.result[0].fetch('sub') { raise MissingSubError unless user_session }
-      else
-        # we have an error
-        decoded_token.errors
-        return nil
-      end
-    end
-
-    def user_token
-      auth = request.env.fetch('Authentication') { raise MissingTokenError unless user_session }
-      auth.sub(/Bearer\s/, '')
-    end
-
   end
 end
 

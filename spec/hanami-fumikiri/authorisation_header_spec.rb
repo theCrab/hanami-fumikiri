@@ -29,12 +29,20 @@ describe Hanami::Fumikiri do
         JWT::DecodeError
     end
 
-    it 'raises error sub missing' do
+    it 'fails when no \'sub\' key provided' do
       no_sub_data = { no_sub: user.id, iat: Time.now.to_i, exp: Time.now.to_i + 800407, aud: 'role:admin' }
       invalid_token = JWT.encode(no_sub_data, ENV['JWT_SECRET'], 'HS256')
       expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
-        Hanami::Fumikiri::MissingSubError
+        KeyError
     end
+
+    it 'fails when no audience role role' do
+      no_sub_data = { sub: user.id, iat: Time.now.to_i, exp: Time.now.to_i + 800407 }
+      invalid_token = JWT.encode(no_sub_data, ENV['JWT_SECRET'], 'HS256')
+      expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
+        JWT::InvalidAudError
+    end
+
   end
 
   describe 'valid action calls' do
