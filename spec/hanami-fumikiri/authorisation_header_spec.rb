@@ -36,7 +36,7 @@ describe Hanami::Fumikiri do
         KeyError
     end
 
-    it 'fails when no audience role role' do
+    it 'fails when no audience role' do
       no_sub_data = { sub: user.id, iat: Time.now.to_i, exp: Time.now.to_i + 800407 }
       invalid_token = JWT.encode(no_sub_data, ENV['JWT_SECRET'], 'HS256')
       expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
