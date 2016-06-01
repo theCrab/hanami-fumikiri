@@ -29,20 +29,60 @@ describe Hanami::Fumikiri do
         JWT::DecodeError
     end
 
-    it 'fails when no \'sub\' key provided' do
-      no_sub_data = { no_sub: user.id, iat: Time.now.to_i, exp: Time.now.to_i + 800407, aud: 'role:admin' }
-      invalid_token = JWT.encode(no_sub_data, ENV['JWT_SECRET'], 'HS256')
-      expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
-        KeyError
-    end
+    describe "missing payload data keys" do
+      before do
+        @valid_data = {
+          sub: user.id,                 # subject:
+          iat: Time.now.to_i,           # issued_at: DateTime when it was created
+          exp: Time.now.to_i + 800407,  # expire: DateTime when it expires
+          aud: user.role,               # audience: [1000, 301, 500, ...], could be a user/app role/ACL
+          iss: 'thecrab.com',           # issuer: who issued the token
+          jti: user.jti                 # JWT ID: we can store this in db
+        }
+      end
 
-    it 'fails when no audience role' do
-      no_sub_data = { sub: user.id, iat: Time.now.to_i, exp: Time.now.to_i + 800407 }
-      invalid_token = JWT.encode(no_sub_data, ENV['JWT_SECRET'], 'HS256')
-      expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
-        JWT::InvalidAudError
-    end
+      it 'no sub' do
+        invalid_data = @valid_data.reject { |key| key == :sub }
+        invalid_token = JWT.encode(invalid_data, ENV['JWT_SECRET'], 'HS256')
+        expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
+          KeyError
+      end
 
+      it 'no iss' do
+        invalid_data = @valid_data.reject { |key| key == :iss }
+        invalid_token = JWT.encode(invalid_data, ENV['JWT_SECRET'], 'HS256')
+        expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
+          JWT::InvalidIssuerError
+      end
+
+      it 'no aud' do
+        invalid_data = @valid_data.reject { |key| key == :aud }
+        invalid_token = JWT.encode(invalid_data, ENV['JWT_SECRET'], 'HS256')
+        expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
+          JWT::InvalidAudError
+      end
+
+      it 'no jti' do
+        invalid_data = @valid_data.reject { |key| key == :jti }
+        invalid_token = JWT.encode(invalid_data, ENV['JWT_SECRET'], 'HS256')
+        expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
+         JWT::InvalidJtiError 
+      end
+
+      # it 'no iat' do
+      #   invalid_data = @valid_data.reject { |key| key == :iat }
+      #   invalid_token = JWT.encode(invalid_data, ENV['JWT_SECRET'], 'HS256')
+      #   expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
+      #    JWT::InvalidJtiError 
+      # end
+
+      # it 'no exp' do
+      #   invalid_data = @valid_data.reject { |key| key == :exp }
+      #   invalid_token = JWT.encode(invalid_data, ENV['JWT_SECRET'], 'HS256')
+      #   expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
+      #    JWT::InvalidJtiError 
+      # end
+    end
   end
 
   describe 'valid action calls' do
