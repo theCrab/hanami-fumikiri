@@ -10,10 +10,6 @@ module Hanami
     end
 
     private
-    def current_user
-      validate_jwt if user_token
-      @current_user = UserRepository.find(user_id)
-    end
 
     def authenticate!
       redirect_to '/login' unless authenticated?
@@ -23,29 +19,47 @@ module Hanami
       !!current_user
     end
 
-    def user_session
-      nil # temporary until real session
-    end
-
-    def user_id
-      token_sub || user_session
+    def current_user
+      @current_user = UserRepository.find(token_sub)
     end
 
     def token_sub
-      @decoded_token[0].fetch('sub') { raise MissingSubError unless user_session }
+      ## Moved hadling of failure to TokenHandler
+      # this way here we can write only code for successfull requests
+      # what you think of this, makes any sense?
+      decoded_token.result[0].fetch('sub')
+    end
+
+    def decoded_token
+      TokenHandler.new({ data: user_token, action: 'verify' }).call
     end
 
     def user_token
-      request.env.fetch('Authentication') { raise MissingTokenError unless user_session }
+      auth_token || authentication_header
     end
 
-    def validate_jwt
-      begin
-        token = user_token.sub(/Bearer\s/, '')
-        @decoded_token = JWT.decode(token, ENV['JWT_SECRET'], 'HS256')
-      rescue JWT::DecodeError => e
-        raise e
-      end
+    def auth_token
+      request.env['auth_token']
+    end
+
+    def authentication_header
+      (request.env.fetch('Authentication') { raise MissingTokenError }).
+        sub(/Bearer\s/, '')
+    end
+
+    def create_token(user)
+      payload = {
+        data: {
+          sub: user.id,                 # subject:
+          iat: Time.now.to_i,           # issued_at: DateTime when it was created
+          exp: Time.now.to_i + 800407,  # expire: DateTime when it expires
+          aud: user.role,               # audience: [1000, 301, 500, ...], could be a user/app role/ACL
+          iss: 'thecrab.com',           # issuer: who issued the token
+          jti: user.jti                 # JWT ID: we can store this in db
+        },
+        action: 'issue'                 # Will this conflict with Hanami::Action ?
+      }
+      TokenHandler.new(payload).call
     end
   end
 end
