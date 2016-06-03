@@ -24,9 +24,6 @@ module Hanami
     end
 
     def token_sub
-      ## Moved hadling of failure to TokenHandler
-      # this way here we can write only code for successfull requests
-      # what you think of this, makes any sense?
       decoded_token.result[0].fetch('sub')
     end
 
@@ -57,7 +54,7 @@ module Hanami
           iss: 'thecrab.com',           # issuer: who issued the token
           jti: user.jti                 # JWT ID: we can store this in db
         },
-        action: 'issue'                 # Will this conflict with Hanami::Action ?
+        action: 'issue'                 # Should not, its inside data
       }
       TokenHandler.new(payload).call
     end
