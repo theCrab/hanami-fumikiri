@@ -2,10 +2,8 @@ describe Hanami::Fumikiri do
   let(:action) do
     Class.new do
       include Hanami::Action
-      expose :user
 
       def call(params)
-        @user = current_user
       end
     end.new
   end
