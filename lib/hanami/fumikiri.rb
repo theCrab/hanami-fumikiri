@@ -16,11 +16,13 @@ module Hanami
     end
 
     def authenticated?
-      !!current_user
+      !!current_user && !current_user.kind_of?(Guest)
     end
 
     def current_user
       @current_user = UserRepository.new.find(token_sub)
+    rescue MissingTokenError
+      @current_user = Guest.new
     end
 
     def token_sub
