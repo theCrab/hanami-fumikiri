@@ -13,17 +13,17 @@ describe Hanami::Fumikiri do
   describe 'test private methods' do
     describe 'authenticated?' do
       it 'Guest.new => false' do
-        action.define_singleton_method(:set_user) { @user = Guest.new }
+        action.instance_variable_set("@user", Guest.new)
         expect(action.send(:authenticated?)).to eq false
       end
 
       it 'nil => false' do
-        action.define_singleton_method(:set_user) { @user = nil }
+        action.instance_variable_set("@user", nil)
         expect(action.send(:authenticated?)).to eq false
       end
 
       it 'user => true' do
-        action.define_singleton_method(:set_user) { @user = UserRepository.new.create(User.new(name: 'Bob')) }
+        action.instance_variable_set("@user", UserRepository.new.create(User.new(name: 'Bob')))
         expect(action.send(:authenticated?)).to eq true
       end
     end

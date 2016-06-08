@@ -5,7 +5,7 @@ module Hanami
 
     def self.included(base)
       base.class_eval do
-        expose :set_user
+        expose :set_user # Exposing set_user to bubble up errors
         expose :user
       end
     end
@@ -16,9 +16,7 @@ module Hanami
       redirect_to '/login' unless authenticated?
     end
 
-        require 'pry'
     def authenticated?
-      set_user
       !!@user && !@user.kind_of?(Guest)
     end
 
@@ -69,6 +67,7 @@ end
 ::Hanami::Controller.configure do
   prepare do
     include Hanami::Fumikiri
+    before :set_user
     before :authenticate!
   end
 end
