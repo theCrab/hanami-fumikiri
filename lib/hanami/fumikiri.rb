@@ -3,13 +3,6 @@ require 'hanami/controller'
 module Hanami
   module Fumikiri
 
-    def self.included(base)
-      base.class_eval do
-        expose :set_user # Exposing set_user to bubble up errors
-        expose :user
-      end
-    end
-
     private
 
     def authenticate!
@@ -67,7 +60,8 @@ end
 ::Hanami::Controller.configure do
   prepare do
     include Hanami::Fumikiri
-    before :set_user
-    before :authenticate!
+    before :set_user, :authenticate!
+    expose :set_user # Exposing set_user to bubble up errors
+    expose :user
   end
 end
