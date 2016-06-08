@@ -5,7 +5,8 @@ module Hanami
 
     def self.included(base)
       base.class_eval do
-        expose :current_user
+        expose :set_user
+        expose :user
       end
     end
 
@@ -15,14 +16,16 @@ module Hanami
       redirect_to '/login' unless authenticated?
     end
 
+        require 'pry'
     def authenticated?
-      !!current_user && !current_user.kind_of?(Guest)
+      set_user
+      !!@user && !@user.kind_of?(Guest)
     end
 
-    def current_user
-      @current_user = UserRepository.new.find(token_sub)
+    def set_user
+      @user = UserRepository.new.find(token_sub)
     rescue MissingTokenError
-      @current_user = Guest.new
+      @user = Guest.new
     end
 
     def token_sub
