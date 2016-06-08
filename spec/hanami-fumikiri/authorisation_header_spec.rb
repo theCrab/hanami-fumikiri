@@ -22,6 +22,10 @@ describe Hanami::Fumikiri do
       request.call({})
       expect(request.user).to be_kind_of Guest
     end
+
+    it 'returns the right status' do
+      expect(action.new.call({})[0]).to eq 302
+    end
   end
 
   describe 'invalid action calls' do
@@ -93,6 +97,7 @@ describe Hanami::Fumikiri do
     it 'raises no errors' do
       expect(encoded_data.success?).to be(true)
       expect{ action.new.call('Authentication' => "Bearer #{encoded_data.result}") }.not_to raise_error
+      expect(action.new.call('Authentication' => "Bearer #{encoded_data.result}")[0]).to eq 200
     end
 
     it 'returs a user with same id as sub' do

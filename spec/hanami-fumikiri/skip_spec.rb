@@ -60,10 +60,12 @@ describe Hanami::Fumikiri do
   it 'valid action call' do
     expect(encoded_data.success?).to be(true)
     expect{ action.new.call('Authentication' => "Bearer #{encoded_data.result}") }.not_to raise_error
+    expect(action.new.call('Authentication' => "Bearer #{encoded_data.result}")[0]).to eq 200
   end
 
-  it 'empty action' do
+  it 'empty action does not redirect' do
     expect{ action.new.call({}) }.not_to raise_error
+    expect(action.new.call({})[0]).to eq 200
   end
 
 end
