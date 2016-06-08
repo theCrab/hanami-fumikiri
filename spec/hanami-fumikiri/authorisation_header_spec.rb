@@ -96,7 +96,7 @@ describe Hanami::Fumikiri do
     it 'returs a user with same id as sub' do
       valid_request = action.new
       valid_request.call('Authentication' => "Bearer #{encoded_data.result}")
-      expect(valid_request.user.id).to eq 1
+      expect(valid_request.user).to eq UserRepository.new.find(1)
     end
 
   end
