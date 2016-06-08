@@ -3,7 +3,7 @@ module Hanami
     module Skip
       private
 
-      def current_user
+      def set_user
         Guest.new
       end
     end
