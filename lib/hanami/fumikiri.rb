@@ -20,7 +20,7 @@ module Hanami
     end
 
     def current_user
-      @current_user = UserRepository.find(token_sub)
+      @current_user = UserRepository.new.find(token_sub)
     end
 
     def token_sub

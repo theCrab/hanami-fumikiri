@@ -12,10 +12,11 @@ describe Hanami::Fumikiri do
   end
 
   let(:secret)       { 'jwt$3cr3t' }
-  let(:user)         { UserRepository.new(1) }
+  let(:user)         { UserRepository.new.create(User.new(name: 'Bob'))  }
   let(:encoded_data) { action.new.send(:create_token, user) }
 
   before { ENV['JWT_SECRET'] = secret }
+  after  { UserRepository.new.clear   }
 
   describe 'invalid action calls' do
 
