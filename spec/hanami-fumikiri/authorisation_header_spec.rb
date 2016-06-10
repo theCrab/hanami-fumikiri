@@ -73,21 +73,21 @@ describe Hanami::Fumikiri do
         invalid_data = @valid_data.reject { |key| key == :jti }
         invalid_token = JWT.encode(invalid_data, ENV['JWT_SECRET'], 'HS256')
         expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
-         JWT::InvalidJtiError 
+         JWT::InvalidJtiError
       end
 
       # it 'no iat' do
       #   invalid_data = @valid_data.reject { |key| key == :iat }
       #   invalid_token = JWT.encode(invalid_data, ENV['JWT_SECRET'], 'HS256')
       #   expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
-      #    JWT::InvalidJtiError 
+      #    JWT::InvalidJtiError
       # end
 
       # it 'no exp' do
       #   invalid_data = @valid_data.reject { |key| key == :exp }
       #   invalid_token = JWT.encode(invalid_data, ENV['JWT_SECRET'], 'HS256')
       #   expect{ action.new.call('Authentication' => "Bearer #{invalid_token}") }.to raise_error \
-      #    JWT::InvalidJtiError 
+      #    JWT::InvalidJtiError
       # end
     end
   end

@@ -32,17 +32,11 @@ module Hanami
     end
 
     def auth_token
-      request.env['auth_token']
+      request.env.fetch('auth_token', '')
     end
 
     def authentication_header
-      begin
-        t = request.env['Authentication'].sub(/Bearer\s/, '')
-      rescue NoMethodError
-        # token is missing in the header
-        return nil
-      end
-      t
+      request.env.fetch('Authentication', '').sub(/Bearer\s/, '')
     end
 
     def create_token(user)
