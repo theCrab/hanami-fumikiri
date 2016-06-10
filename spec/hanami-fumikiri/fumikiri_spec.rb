@@ -11,17 +11,17 @@ describe Hanami::Fumikiri do
   describe 'test private methods' do
     describe 'authenticated?' do
       it 'Guest.new => false' do
-        action.instance_variable_set("@user", Guest.new)
+        action.instance_variable_set("@current_user", Guest.new)
         expect(action.send(:authenticated?)).to eq false
       end
 
       it 'nil => false' do
-        action.instance_variable_set("@user", nil)
+        action.instance_variable_set("@current_user", nil)
         expect(action.send(:authenticated?)).to eq false
       end
 
       it 'user => true' do
-        action.instance_variable_set("@user", UserRepository.new.create(User.new(name: 'Bob')))
+        action.instance_variable_set("@current_user", UserRepository.new.create(User.new(name: 'Bob')))
         expect(action.send(:authenticated?)).to eq true
       end
     end

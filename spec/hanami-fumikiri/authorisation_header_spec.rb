@@ -20,7 +20,7 @@ describe Hanami::Fumikiri do
     it 'current_user should be Guest' do
       request = action.new
       request.call({})
-      expect(request.user).to be_kind_of Guest
+      expect(request.current_user).to be_kind_of Guest
     end
 
     it 'returns the right status' do
@@ -103,7 +103,7 @@ describe Hanami::Fumikiri do
     it 'returs a user with same id as sub' do
       request = action.new
       request.call('Authentication' => "Bearer #{encoded_data.result}")
-      expect(request.user).to eq UserRepository.new.find(1)
+      expect(request.current_user).to eq UserRepository.new.find(1)
     end
 
   end

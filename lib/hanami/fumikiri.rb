@@ -10,13 +10,13 @@ module Hanami
     end
 
     def authenticated?
-      !!@user && !@user.kind_of?(Guest)
+      !!@current_user && !@current_user.kind_of?(Guest)
     end
 
     def set_user
-      @user = UserRepository.new.find(token_sub)
+      @current_user = UserRepository.new.find(token_sub)
     rescue MissingTokenError
-      @user = Guest.new
+      @current_user = Guest.new
     end
 
     def token_sub
@@ -61,7 +61,6 @@ end
   prepare do
     include Hanami::Fumikiri
     before :set_user, :authenticate!
-    expose :set_user # Exposing set_user to bubble up errors
-    expose :user
+    expose :set_user, :current_user # Exposing set_user to bubble up errors
   end
 end
