@@ -27,7 +27,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler',          '~> 1.5'
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'hanami-controller'
-  spec.add_development_dependency 'hanami-model',     '~> 0.6.2'
   spec.add_development_dependency 'rake',             '~> 10'
+  # Hanami model commented out as dependency until version =< 0.6.2 available
+  # spec.add_development_dependency 'hanami-model'
   # spec.add_development_dependency 'rack-test',      '~> 0.6'
 end

@@ -1,4 +1,5 @@
 source "https://rubygems.org"
 
-# gem "hanami"
 gemspec
+gem 'hanami-utils', github: 'hanami/utils', branch: 'master'
+gem 'hanami-model', github: 'hanami/model', branch: 'master'
