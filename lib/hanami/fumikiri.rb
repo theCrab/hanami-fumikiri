@@ -3,12 +3,6 @@ require 'hanami/controller'
 module Hanami
   module Fumikiri
 
-    def self.included(base)
-      base.class_eval do
-        expose :current_user
-      end
-    end
-
     private
 
     def authenticate!
@@ -16,11 +10,13 @@ module Hanami
     end
 
     def authenticated?
-      !!current_user
+      !!@current_user && !@current_user.kind_of?(Guest)
     end
 
-    def current_user
+    def set_user
       @current_user = UserRepository.new.find(token_sub)
+    rescue MissingTokenError
+      @current_user = Guest.new
     end
 
     def token_sub
@@ -64,6 +60,7 @@ end
 ::Hanami::Controller.configure do
   prepare do
     include Hanami::Fumikiri
-    before :authenticate!
+    before :set_user, :authenticate!
+    expose :set_user, :current_user # Exposing set_user to bubble up errors
   end
 end

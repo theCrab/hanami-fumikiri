@@ -3,10 +3,8 @@ describe Hanami::Fumikiri do
   let(:action) do
     Class.new do
       include Hanami::Action
-      expose :user
 
       def call(params)
-        @user = current_user
       end
     end
   end
@@ -18,12 +16,20 @@ describe Hanami::Fumikiri do
   before { ENV['JWT_SECRET'] = secret }
   after  { UserRepository.new.clear   }
 
+  describe 'guest action calls' do
+    it 'current_user should be Guest' do
+      request = action.new
+      request.call({})
+      expect(request.current_user).to be_kind_of Guest
+    end
+
+    it 'returns the right status' do
+      expect(action.new.call({})[0]).to eq 302
+    end
+  end
+
   describe 'invalid action calls' do
 
-    it 'raises MissingTokenError when Authentication is missing' do
-      expect{ action.new.call({}) }.to raise_error \
-        Hanami::Fumikiri::MissingTokenError
-    end
 
     it 'raises error when invalid token' do
       expect{ action.new.call('Authentication' => 'not_so_valid_token') }.to raise_error \
@@ -91,12 +97,13 @@ describe Hanami::Fumikiri do
     it 'raises no errors' do
       expect(encoded_data.success?).to be(true)
       expect{ action.new.call('Authentication' => "Bearer #{encoded_data.result}") }.not_to raise_error
+      expect(action.new.call('Authentication' => "Bearer #{encoded_data.result}")[0]).to eq 200
     end
 
     it 'returs a user with same id as sub' do
-      valid_request = action.new
-      valid_request.call('Authentication' => "Bearer #{encoded_data.result}")
-      expect(valid_request.user.id).to eq 1
+      request = action.new
+      request.call('Authentication' => "Bearer #{encoded_data.result}")
+      expect(request.current_user).to eq UserRepository.new.find(1)
     end
 
   end
