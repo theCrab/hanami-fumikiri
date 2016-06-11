@@ -50,7 +50,7 @@ module Hanami
           iss: 'thecrab.com',           # issuer: who issued the token
           jti: user.jti                 # JWT ID: we can store this in db
         },
-        action: 'issue'                 # Should not, its inside data
+        action: 'issue'
       }
       TokenHandler.new(payload).call
     end

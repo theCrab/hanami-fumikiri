@@ -24,8 +24,9 @@ module Hanami
       private
 
       def verify
+        ### What should be done when token is an empty '' string?
+        ##
         JWT.decode(@payload[:data], ENV['JWT_SECRET'], true, {
-          # This is a hash..
             verify_iat: true,
             iat: true,
             verify_aud: true,
