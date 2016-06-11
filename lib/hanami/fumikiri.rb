@@ -32,7 +32,7 @@ module Hanami
     end
 
     def auth_token
-      request.env.fetch('auth_token', '')
+      request.env['auth_token']
     end
 
     def authentication_header
