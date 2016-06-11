@@ -14,9 +14,8 @@ module Hanami
     end
 
     def set_user
+      return @current_user = Guest.new unless decoded_token
       @current_user = UserRepository.new.find(token_sub)
-    rescue MissingTokenError
-      @current_user = Guest.new
     end
 
     def token_sub
@@ -24,7 +23,9 @@ module Hanami
     end
 
     def decoded_token
-      TokenHandler.new({ data: user_token, action: 'verify' }).call
+      unless user_token.nil? || user_token.size == 0
+        TokenHandler.new({ data: user_token, action: 'verify' }).call
+      end
     end
 
     def user_token
@@ -32,7 +33,7 @@ module Hanami
     end
 
     def auth_token
-      request.env.fetch('auth_token', '')
+      request.env.fetch('auth_token', nil)
     end
 
     def authentication_header
