@@ -19,7 +19,7 @@ This approach is inclined towards separating the Hanami Stack from the front-end
 Light and completely follows the JWT official Specifications.
 Support for
 - [x] <del>Allow username and password-based authentication</del>. This is the responsibility of a `Signup/User management` process, which every app must implement based on its needs. However, we expect to receive a JWT token in a in the form of a cookie `'auth_token'` or header `'Authentication'= 'Bearer '`.
-- [x] username and password based accounts <del>are always enabled</del>. We have provided an [example app](/theCrab/Bookshelf) to illustrate this. Your app should implement its own requirements.
+- [x] username and password based accounts <del>are always enabled</del>. We have provided an [example app](https://github.com/theCrab/Bookshelf) to illustrate this. Your app should implement its own requirements.
 
 ## User Sessions
 - Require revocable sessions
