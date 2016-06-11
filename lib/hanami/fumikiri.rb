@@ -6,7 +6,7 @@ module Hanami
     private
 
     def authenticate!
-      redirect_to '/login' unless authenticated?
+      redirect_to '/signin' unless authenticated?
     end
 
     def authenticated?
