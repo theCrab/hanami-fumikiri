@@ -1,8 +1,8 @@
 require 'hanami/controller'
 
 module Hanami
+  # Fumikiri namespace
   module Fumikiri
-
     private
 
     def authenticate!
@@ -10,7 +10,7 @@ module Hanami
     end
 
     def authenticated?
-      !!@current_user && !@current_user.kind_of?(Guest)
+      !@current_user && !@current_user.is_a?(Guest)
     end
 
     def set_user
@@ -24,7 +24,7 @@ module Hanami
 
     def decoded_token
       unless user_token.nil? || user_token.size == 0
-        TokenHandler.new({ data: user_token, action: 'verify' }).call
+        TokenHandler.new(data: user_token, action: 'verify').call
       end
     end
 
@@ -44,9 +44,9 @@ module Hanami
       payload = {
         data: {
           sub: user.id,                 # subject:
-          iat: Time.now.to_i,           # issued_at: DateTime when it was created
-          exp: Time.now.to_i + 800407,  # expire: DateTime when it expires
-          aud: user.role,               # audience: [1000, 301, 500, ...], could be a user/app role/ACL
+          iat: Time.now.to_i,           # issued_at: DateTime when created
+          exp: Time.now.to_i + 800_407, # expire: DateTime when it expires
+          aud: user.role,               # audience: [1000, 301, 500, ...]
           iss: 'thecrab.com',           # issuer: who issued the token
           jti: user.jti                 # JWT ID: we can store this in db
         },
