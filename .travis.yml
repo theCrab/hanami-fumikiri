@@ -1,4 +1,7 @@
 language: ruby
+sudo: false
+cache: bundler
+script: 'bundle exec rspec spe'
 rvm:
   - 2.2
-before_install: gem install bundler -v 1.11.2
+before_install: gem install bundler

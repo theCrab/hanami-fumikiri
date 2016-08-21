@@ -2,9 +2,11 @@ require 'hanami-fumikiri'
 require 'hanami/controller'
 require 'hanami/model'
 require_relative 'hanami-fumikiri/fixtures'
-require 'coveralls'
 
-Coveralls.wear!
+if ENV['COVERALL']
+  require 'coveralls'
+  Coveralls.wear!
+end
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
