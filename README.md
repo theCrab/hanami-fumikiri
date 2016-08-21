@@ -1,6 +1,6 @@
 # hanami-fumikiri
 
-[![Join the chat at https://gitter.im/theCrab/hanami-fumikiri](https://badges.gitter.im/theCrab/hanami-fumikiri.svg)](https://gitter.im/theCrab/hanami-fumikiri?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Coverage Status](https://coveralls.io/repos/github/theCrab/hanami-fumikiri/badge.svg?branch=master)](https://coveralls.io/github/theCrab/hanami-fumikiri?branch=master) [![Join the chat at https://gitter.im/theCrab/hanami-fumikiri](https://badges.gitter.im/theCrab/hanami-fumikiri.svg)](https://gitter.im/theCrab/hanami-fumikiri?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Hanami User Authentication.  
 
 **[PLEASE CHECK THIS GIST FIRST](https://gist.github.com/theCrab/54a339b7a08ddad84e35)**
